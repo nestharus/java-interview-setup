@@ -1,5 +1,8 @@
-package com.real.interview.handler;
+package com.real.interview.exception;
 
+import com.real.interview.common.entity.AbstractEntity;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,12 +14,23 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-
 @ControllerAdvice
 public class GlobalExceptionHandler {
   private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+  @ExceptionHandler(EntityBulkUpdateException.class)
+  public ResponseEntity<Object> handleEntityBulkUpdateException(
+      final EntityBulkUpdateException exception, final WebRequest webRequest) {
+    final var foundIds =
+        exception.getFoundEntities().stream()
+            .map(AbstractEntity::getId)
+            .collect(Collectors.toSet());
+    final var missingIds =
+        exception.getSearchedIds().stream().filter(id -> !foundIds.contains(id)).toList();
+
+    logger.error("Entities not found: {}", "%s".formatted(missingIds), exception);
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(missingIds);
+  }
 
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<Object> handleIllegalArgumentException(final IllegalArgumentException exception, final WebRequest webRequest) {

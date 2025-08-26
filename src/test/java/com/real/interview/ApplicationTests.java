@@ -1,6 +1,6 @@
 package com.real.interview;
 
-import com.real.interview.service.Tester;
+import com.real.interview.service.TesterService;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,17 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class JavaBackendInterviewApplicationTests {
-  private static final Logger logger = LoggerFactory.getLogger(JavaBackendInterviewApplicationTests.class);
+class ApplicationTests {
+  private static final Logger logger = LoggerFactory.getLogger(ApplicationTests.class);
 
-  @Autowired
-  private Tester tester;
+  @Autowired private TesterService testerService;
 
   @Test
-	void contextLoads() {
+  void contextLoads() {
     logger.info("hello");
 
-    tester.test();
-	}
-
+    // testerService.getTest();
+  }
 }

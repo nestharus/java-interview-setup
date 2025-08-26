@@ -1,6 +1,5 @@
 package com.real.interview.audit;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -30,19 +29,16 @@ public class AuditContextAspect {
   @Around(
       "@within(org.springframework.web.bind.annotation.RestController) || "
           + "@within(org.springframework.stereotype.Controller)")
-  public Object populateAuditContext(ProceedingJoinPoint joinPoint) throws Throwable {
-    String username = extractUsernameFromRequest();
+  public Object populateAuditContext(final ProceedingJoinPoint joinPoint) throws Throwable {
+    final var username = extractUsernameFromRequest();
 
-    // Set the username in the audit context
     AuditorContextHolder.setAuditor(username);
 
     try {
-      // Proceed with the original method execution
       return joinPoint.proceed();
-    } catch (Throwable e) {
-      // Clear context on exception
+    } catch (final Throwable exception) {
       AuditorContextHolder.clear();
-      throw e;
+      throw exception;
     }
     // Note: We don't clear the context here because the audit interceptor
     // needs to run after this method completes. The context will be cleared
@@ -51,29 +47,26 @@ public class AuditContextAspect {
 
   /**
    * Extracts the username from the X-Username HTTP header. Returns null if no header is present or
-   * if it's empty, indicating an anonymous user. Services should explicitly provide their service
-   * name when making internal calls.
+   * if it's empty, indicating an anonymous user.
    */
   private String extractUsernameFromRequest() {
     try {
-      ServletRequestAttributes requestAttributes =
+      final var requestAttributes =
           (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
       if (requestAttributes != null) {
-        HttpServletRequest request = requestAttributes.getRequest();
-        String username = request.getHeader("X-Username");
+        final var request = requestAttributes.getRequest();
+        final var username = request.getHeader("X-Username");
 
         if (username != null && !username.trim().isEmpty()) {
           return username.trim();
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception exception) {
       // Log the exception if needed, but don't fail the request
-      // In a real application, you might want to log this
     }
 
     // Return null for anonymous users (public endpoints with no authentication)
-    // Services should explicitly provide their service name in the X-Username header
     return null;
   }
 }

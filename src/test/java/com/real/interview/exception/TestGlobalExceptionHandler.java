@@ -1,4 +1,4 @@
-package com.real.interview.handler;
+package com.real.interview.exception;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

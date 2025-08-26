@@ -3,14 +3,14 @@ package com.real.interview.audit;
 import java.util.Optional;
 
 public class AuditorContextHolder {
-  private static final ThreadLocal<Long> AUDITOR = new ThreadLocal<>();
+  private static final ThreadLocal<String> AUDITOR = new ThreadLocal<>();
 
-  public static Optional<Long> getAuditor() {
+  public static Optional<String> getAuditor() {
     return Optional.ofNullable(AUDITOR.get());
   }
 
-  public static void setAuditor(Long userId) {
-    AUDITOR.set(userId);
+  public static void setAuditor(final String username) {
+    AUDITOR.set(username);
   }
 
   public static void clear() {

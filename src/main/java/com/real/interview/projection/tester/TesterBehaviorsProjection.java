@@ -12,18 +12,20 @@ import java.util.stream.Stream;
 public record TesterBehaviorsProjection(Tester tester, List<AbstractBehaviorProjection> behaviors) {
   public TesterBehaviorsProjection(
       final Tester tester,
-      final BehaviorType behaviorInputType,
+      final String behaviorInputType,
       final Double inputVelocity,
-      final BehaviorType behaviorPhysicsType,
+      final String behaviorPhysicsType,
       final Double physicsWeight) {
     this(
         tester,
         Stream.of(
                 behaviorInputType != null
-                    ? new BehaviorInputProjection(behaviorInputType, inputVelocity)
+                    ? new BehaviorInputProjection(
+                        BehaviorType.valueOf(behaviorInputType), inputVelocity)
                     : null,
                 behaviorPhysicsType != null
-                    ? new BehaviorPhysicsProjection(behaviorPhysicsType, physicsWeight)
+                    ? new BehaviorPhysicsProjection(
+                        BehaviorType.valueOf(behaviorPhysicsType), physicsWeight)
                     : null)
             .filter(Objects::nonNull)
             .map(AbstractBehaviorProjection.class::cast)

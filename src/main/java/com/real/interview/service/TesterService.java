@@ -1,6 +1,6 @@
 package com.real.interview.service;
 
-import static com.real.interview.common.validator.EntityValidator.validateAllEntitiesFound;
+import static com.real.interview.common.validator.EntityValidator.*;
 
 import com.real.interview.domain.tester.Tester;
 import com.real.interview.dto.tester.TesterDto;
@@ -52,7 +52,7 @@ public class TesterService {
         .toList();
   }
 
-  private List<Tester> updateExistingTesters(final List<TesterDto> dtosWithUpdates) {
+  public List<Tester> updateExistingTesters(final List<TesterDto> dtosWithUpdates) {
     if (dtosWithUpdates.isEmpty()) {
       return List.of();
     }
@@ -62,13 +62,12 @@ public class TesterService {
     final var entitiesToUpdate = testerRepository.findAllById(idsToSearch);
 
     validateAllEntitiesFound(idsToSearch, entitiesToUpdate);
-
-    testerMapper.updateEntities(dtosWithUpdates, entitiesToUpdate);
+    withEntitiesLocking(testerMapper::updateEntity).accept(dtosWithUpdates, entitiesToUpdate);
 
     return testerRepository.saveAll(entitiesToUpdate);
   }
 
-  private List<Tester> createNewTesters(final List<TesterDto> newDtos) {
+  public List<Tester> createNewTesters(final List<TesterDto> newDtos) {
     if (newDtos.isEmpty()) {
       return List.of();
     }

@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ApplicationTests {
-  private static final Logger logger = LoggerFactory.getLogger(ApplicationTests.class);
+class TestApplication {
+  private static final Logger logger = LoggerFactory.getLogger(TestApplication.class);
 
   @Autowired private TesterService testerService;
 

@@ -8,7 +8,13 @@ import java.util.stream.Stream;
 
 public record TesterBehaviorTypesProjection(Tester tester, List<BehaviorType> behaviors) {
   public TesterBehaviorTypesProjection(
-      final Tester tester, final BehaviorType behaviorInput, final BehaviorType behaviorPhysics) {
-    this(tester, Stream.of(behaviorInput, behaviorPhysics).filter(Objects::nonNull).toList());
+      final Tester tester, final String behaviorInput, final String behaviorPhysics) {
+    this(
+        tester,
+        Stream.of(
+                behaviorInput != null ? BehaviorType.valueOf(behaviorInput) : null,
+                behaviorPhysics != null ? BehaviorType.valueOf(behaviorPhysics) : null)
+            .filter(Objects::nonNull)
+            .toList());
   }
 }

@@ -4,14 +4,16 @@ import com.real.interview.audit.AuditInfo;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public abstract class AbstractEntity {
+public abstract class AbstractEntity implements VersionedEntity<Long> {
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
-  private long id;
+  private Long id;
 
   @Version private long version;
 

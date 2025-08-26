@@ -1,6 +1,5 @@
 package com.real.interview.domain.tester;
 
-import com.real.interview.audit.AuditInfo;
 import com.real.interview.common.entity.AbstractEntity;
 import com.real.interview.domain.tester2.Tester2;
 import jakarta.persistence.*;
@@ -13,7 +12,6 @@ import lombok.Setter;
 @Setter
 @Entity
 public class Tester extends AbstractEntity {
-  @Embedded private AuditInfo auditInfo;
 
   @ElementCollection
   @CollectionTable

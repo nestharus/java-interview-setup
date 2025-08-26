@@ -17,7 +17,7 @@ public class AuditInfo {
 
   @LastModifiedDate private Instant lastModifiedDate;
 
-  @CreatedBy private long createdBy;
+  @CreatedBy private String createdBy;
 
-  @LastModifiedBy private long lastModifiedBy;
+  @LastModifiedBy private String lastModifiedBy;
 }

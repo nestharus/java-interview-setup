@@ -8,11 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -45,7 +47,23 @@ public class GlobalExceptionHandler {
         .collect(Collectors.joining(", "));
     logger.error("Validation failed: {}", errorMessage, exception);
     return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+  }
 
+  @ExceptionHandler(HandlerMethodValidationException.class)
+  public ResponseEntity<Object> handleIllegalArgumentException(
+      final HandlerMethodValidationException exception, final WebRequest webRequest) {
+    final var errorMessage =
+        exception.getAllErrors().stream()
+            .map(
+                objectError -> {
+                  if (objectError instanceof org.springframework.validation.FieldError fieldError) {
+                    return fieldError.getField() + ": " + fieldError.getDefaultMessage();
+                  }
+                  return objectError.getDefaultMessage();
+                })
+            .collect(Collectors.joining(", "));
+    logger.error("Validation failed: {}", errorMessage, exception);
+    return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
@@ -64,6 +82,14 @@ public class GlobalExceptionHandler {
   public ResponseEntity<Object> handleDataIntegrityViolationException(final DataIntegrityViolationException exception, final WebRequest webRequest) {
     logger.error("Database integrity violation: {}", exception.getMessage(), exception);
     return ResponseEntity.status(HttpStatus.CONFLICT).body("Data conflict or integrity violation. Please check your input.");
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<Object> handleDataIntegrityViolationException(
+      final HttpMessageNotReadableException exception, final WebRequest webRequest) {
+    logger.error("Unable to deserialize HTTP message: {}", exception.getMessage(), exception);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body("Unable to deserialize HTTP message.");
   }
 
   @ExceptionHandler(RuntimeException.class)

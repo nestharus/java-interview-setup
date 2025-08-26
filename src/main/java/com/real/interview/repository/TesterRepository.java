@@ -15,13 +15,13 @@ public interface TesterRepository extends JpaRepository<Tester, Long> {
       """
     SELECT NEW com.real.interview.projection.tester.TesterBehaviorTypesProjection(tester,
       CASE
-        WHEN (input <> NULL)
-        THEN com.real.interview.domain.behavior.BehaviorType.INPUT
+        WHEN (input IS NOT NULL)
+        THEN 'INPUT'
         ELSE NULL
       END,
       CASE
-        WHEN (physics <> NULL)
-        THEN com.real.interview.domain.behavior.BehaviorType.PHYSICS
+        WHEN (physics IS NOT NULL)
+        THEN 'PHYSICS'
         ELSE NULL
       END
     )
@@ -36,14 +36,14 @@ public interface TesterRepository extends JpaRepository<Tester, Long> {
       """
     SELECT NEW com.real.interview.projection.tester.TesterBehaviorsProjection(tester,
       CASE
-        WHEN (input <> NULL)
-        THEN com.real.interview.domain.behavior.BehaviorType.INPUT
+        WHEN (input IS NOT NULL)
+        THEN 'INPUT'
         ELSE NULL
       END,
       input.velocity,
       CASE
-        WHEN (physics <> NULL)
-        THEN com.real.interview.domain.behavior.BehaviorType.PHYSICS
+        WHEN (physics IS NOT NULL)
+        THEN 'PHYSICS'
         ELSE NULL
       END,
       physics.weight
